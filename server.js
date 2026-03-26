@@ -331,3 +331,22 @@ server.listen(PORT, () => {
   console.log(`📡 Socket.io ready`);
   console.log(`🗄️  Connecting to MongoDB...`);
 });
+
+let users = [];
+
+app.post("/api/login", (req, res) => {
+  const { email } = req.body;
+
+  let user = users.find(u => u.email === email);
+
+  if (!user) {
+    user = { id: Date.now(), email };
+    users.push(user);
+  }
+
+  res.json(user);
+});
+
+app.get("/api/users", (req, res) => {
+  res.json(users);
+});
