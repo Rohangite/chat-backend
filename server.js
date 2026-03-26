@@ -129,11 +129,9 @@ app.post("/api/auth/login", async (req, res) => {
 });
 
 // ─── USER ROUTES ──────────────────────────────────────────────────────────────
-app.get("/api/users", authMiddleware, async (req, res) => {
+app.get("/api/users", async (req, res) => {
   try {
-    const users = await User.find({ _id: { $ne: req.user.userId } })
-      .select("-password")
-      .sort({ is_online: -1, username: 1 });
+    const users = await User.find().select("-password");
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -332,21 +330,3 @@ server.listen(PORT, () => {
   console.log(`🗄️  Connecting to MongoDB...`);
 });
 
-let users = [];
-
-app.post("/api/login", (req, res) => {
-  const { email } = req.body;
-
-  let user = users.find(u => u.email === email);
-
-  if (!user) {
-    user = { id: Date.now(), email };
-    users.push(user);
-  }
-
-  res.json(user);
-});
-
-app.get("/api/users", (req, res) => {
-  res.json(users);
-});
